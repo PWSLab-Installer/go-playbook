@@ -1,0 +1,30 @@
+- hosts: localhost
+  connection: local
+  vars:
+    # go_version: 1.15.0
+    # go_custom_mirror: https://dl.google.com/go
+    golang_shell_profile: /root/.bash_profile
+
+  tasks:
+    
+    -   name: Check the version of release
+        command: hostnamectl
+        register: os_check
+        ignore_errors: yes
+    
+    -   name: Install Role Go
+        local_action: command ansible-galaxy install -f fubarhouse.golang
+
+    -   name: Applying role Go
+        command: mv ~/.ansible/roles/fubarhouse.golang ~/.ansible/roles/pwslab.go
+        ignore_errors: yes
+
+    -   name: Installing Go
+        include_role:
+          name: pwslab.go
+    
+    -   name: Sourcing 
+        shell: source /root/.bash_profile && go version
+        args:
+            executable: /bin/bash
+    
